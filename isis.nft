@@ -1,0 +1,37 @@
+#!/usr/sbin/nft -f
+
+flush ruleset
+
+table inet filter {
+    chain input {
+        type filter hook input priority 0; policy drop;
+
+        iif lo accept
+
+        # SSH, DNS
+        tcp dport 22 ct state new,established accept
+        udp dport 53 ct state new,established accept
+        tcp dport 53 ct state new,established accept
+
+        ct state established,related accept
+    }
+
+    chain output {
+        type filter hook output priority 0; policy drop;
+
+        # SSH, DNS, HTTP, HTTPS
+        tcp dport 22 ct state new,established accept
+        udp dport 53 ct state new,established accept
+        tcp dport 53 ct state new,established accept
+        tcp dport 80 ct state new,established accept
+        tcp dport 443 ct state new,established accept
+
+        # ICMP
+        ip protocol icmp accept
+        ct state established,related accept
+    }
+
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+    }
+}
