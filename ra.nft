@@ -18,7 +18,7 @@ table inet filter {
 
         # Conexiones hacia Internet desde contenedores
         iifname !="ens4" oifname "ens4" ct state new,established,related accept
-	iifname "ens4" oifname != "ens4" ct state established,related,new accept
+		iifname "ens4" oifname != "ens4" ct state established,related,new accept
 
         # Permitir paso de puertos de servicios
         iifname "ens4" ip daddr 10.0.200.24 tcp dport 25 accept
